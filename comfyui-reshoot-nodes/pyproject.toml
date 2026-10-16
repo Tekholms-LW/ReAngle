@@ -1,0 +1,24 @@
+[project]
+name = "comfyui-reangle"
+version = "0.2.0"
+description = "ReAngle: re-shoot a video from a new camera angle. Camera paths (presets or a hand-drawn 3D path) and depth reprojection with background-aware fill, built to guide LTX-2.5 IC-LoRA in ComfyUI."
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24"]
+readme = "README.md"
+classifiers = ["Operating System :: OS Independent"]
+
+[project.urls]
+Repository = "https://github.com/Tekholms-LW/ReAngle"
+Documentation = "https://github.com/Tekholms-LW/ReAngle#readme"
+"Bug Tracker" = "https://github.com/Tekholms-LW/ReAngle/issues"
+
+[tool.comfy]
+PublisherId = "tekholms-lw"   # TODO: must match the publisher you create on registry.comfy.org
+DisplayName = "ReAngle (re-shoot camera paths + depth reprojection)"
+Icon = ""
+includes = []
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "--import-mode=importlib"
