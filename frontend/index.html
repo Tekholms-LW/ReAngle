@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ReAngle: re-shoot your clip from a new angle</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <header><h1>ReAngle</h1><p>Re-shoot a clip from new camera angles. Open source, built on ComfyUI + LTX.</p>
+    <span id="backend" class="pill"></span></header>
+  <main>
+    <section class="card" id="hw">
+      <details id="hw-details">
+        <summary><h2>Your hardware</h2><span id="hw-sum" class="hw-sum">checking…</span></summary>
+        <div id="hw-body"></div>
+      </details>
+    </section>
+    <section class="card" id="step-upload">
+      <h2>1 · Upload a clip</h2>
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept="video/mp4,video/quicktime,video/webm,.mkv,.m4v" hidden />
+        <span id="drop-text">Drop a video here or click to choose (2–10 s works best)</span>
+      </label>
+      <p id="notice" class="notice" hidden></p>
+      <video id="preview" controls muted playsinline hidden></video>
+    </section>
+    <section class="card" id="step-angles">
+      <h2>2 · Pick camera moves</h2>
+      <div class="modes"><button type="button" class="mode on" id="mode-presets">Presets</button>
+        <button type="button" class="mode" id="mode-draw">Draw your own path (3D)</button></div>
+      <div id="presets-pane">
+        <div id="presets" class="chips"></div>
+      </div>
+      <div id="draw-pane" hidden>
+        <div class="moves" id="moves">
+          <button type="button" data-move="orbit_left"><span>⟲</span>Orbit left</button>
+          <button type="button" data-move="orbit_right"><span>⟳</span>Orbit right</button>
+          <button type="button" data-move="crane"><span>⤒</span>Crane up</button>
+          <button type="button" data-move="push"><span>⊕</span>Push in</button>
+          <button type="button" data-move="pull"><span>⊖</span>Pull out</button>
+          <button type="button" data-move="matrix"><span>⏸</span>Matrix freeze</button>
+        </div>
+        <div class="shot" id="shot">
+          <canvas id="pv-canvas"></canvas>
+          <div class="shot-top">
+            <span id="shot-label" class="tag">Start · original camera</span>
+            <span class="meter" id="meter" title=""><i id="meter-bar"></i><b id="meter-text">Safe</b></span>
+            <button type="button" id="help" class="round" title="How does this work?">?</button>
+          </div>
+          <div id="start-lock" class="start-lock" hidden>
+            <span>🔒 Start = your original camera (locked)</span>
+            <button type="button" id="set-end">Set end shot →</button>
+          </div>
+          <p id="shot-empty" class="shot-empty">Upload a clip to start. Its first frame shows up here in 3D.</p>
+          <div class="tour" id="tour" hidden>
+            <div class="tour-card">
+              <ol id="tour-steps">
+                <li><b>Drag the picture</b> to frame your <b>end shot</b>. Shift-drag or right-drag slides, scroll pushes in and out. The start always stays your original camera.</li>
+                <li><b>Move the timeline</b> below and frame the end shot. Every shot you frame is saved automatically.</li>
+                <li><b>Press Play</b> to preview the move, then hit <b>Re-shoot</b>.</li>
+              </ol>
+              <p class="tour-tip">Short on ideas? Click a move above and tweak it.</p>
+              <button type="button" id="tour-ok">Got it</button>
+            </div>
+          </div>
+        </div>
+        <p class="hint" id="draw-hint">Drag to aim · Shift-drag to slide · Scroll to push in</p>
+        <div class="tl-row">
+          <button type="button" id="tl-play" class="play">▶ Play</button>
+          <div class="tl-wrap" id="tl-wrap">
+            <div id="tl-marks" class="tl-marks"></div>
+            <input type="range" id="tl" min="0" max="1000" value="0" />
+            <div class="tl-ends"><span>0 s · original</span><span id="tl-end">end</span></div>
+          </div>
+          <output id="tl-out">0.0 s</output>
+        </div>
+        <div class="row">
+          <button type="button" id="reset" class="ghost">↺ Reset to original</button>
+          <button type="button" id="kf-del" class="ghost" hidden>✕ Remove this shot</button>
+          <label class="check"><input type="checkbox" id="freeze" /> Freeze time (matrix)</label>
+        </div>
+        <details id="advanced" class="advanced">
+          <summary>Advanced: overhead view with handles</summary>
+          <p class="hint">Bird's-eye view of the 3D scene and your camera path. Pick a shot on the timeline, then drag the arrows.</p>
+          <span class="seg"><button type="button" id="h-pos" class="mode on">Move camera</button><button type="button" id="h-look" class="mode">Move look-at point</button></span>
+          <div class="pane"><canvas id="ed-canvas"></canvas></div>
+        </details>
+      </div>
+      <label class="slider">Strength <input type="range" id="angle" min="0" max="30" step="1" value="15" />
+        <output id="angle-out">15°</output></label>
+      <div class="quality" id="quality">
+        <label class="slider">Length <input type="range" id="dur" min="1" max="5" step="0.5" value="1.7" />
+          <output id="dur-out">1.7 s</output></label>
+        <label class="qsel">Resolution <select id="res"></select></label>
+        <label class="check" id="up-wrap"><input type="checkbox" id="upscale" /> 2x upscale</label>
+        <label class="check" id="fill-wrap" title="Paints in the background the new camera reveals (behind the subject and at the frame edges) instead of leaving black for the model to copy"><input type="checkbox" id="fill" checked /> Fill revealed areas</label>
+        <span class="hint" id="q-hint"></span>
+      </div>
+      <button id="go" disabled>Re-shoot</button>
+      <div id="progress" hidden><div class="bar"><div id="bar-fill"></div></div><span id="progress-text"></span>
+        <div id="progress-detail" class="hint"></div>
+        <div class="row"><button type="button" id="cancel" class="ghost" hidden>■ Cancel</button>
+          <button type="button" id="resume" class="ghost" hidden>↻ Resume (keeps finished chunks)</button></div></div>
+    </section>
+    <section class="card" id="step-results" hidden>
+      <h2>3 · Results</h2>
+      <div id="tabs" class="chips"></div>
+      <div class="compare" id="compare">
+        <video id="vid-a" muted playsinline loop></video>
+        <div class="clip" id="clip"><video id="vid-b" muted playsinline loop></video></div>
+        <input type="range" id="wipe" min="0" max="100" value="50" aria-label="before/after" />
+      </div>
+      <div class="row"><button id="play">Play / pause</button><a id="download" class="btn" download>Download</a>
+        <span class="hint">Left: original · Right: selected angle</span></div>
+      <div class="row social"><select id="soc-layout"><option value="stacked">Stacked (before / after)</option>
+          <option value="wipe">Animated wipe</option></select>
+        <select id="soc-labels"><option value="Before|After">Before / After</option><option value="Original|Re-shot">Original / Re-shot</option></select>
+        <input id="soc-credit" type="text" maxlength="80" placeholder="Credit line (optional)" />
+        <label class="check"><input type="checkbox" id="soc-preset" /> Made with ReAngle · ComfyUI + LTX</label>
+        <button id="soc-go" type="button">Export for social</button> <a id="soc-dl" class="btn" hidden download>Download 9:16</a>
+        <span id="soc-msg" class="hint"></span></div>
+    </section>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
