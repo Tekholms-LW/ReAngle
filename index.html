@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReAngle — re-shoot any video from a new angle</title>
+<meta name="description" content="Open-source re-shoot for ComfyUI + LTX-2.5. Draw a camera path inside your clip's own 3D depth.">
+<meta property="og:title" content="ReAngle — re-shoot any video from a new angle"><meta property="og:image" content="media/poster.jpg">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header class="nav"><b>ReAngle</b><nav><a href="#try">Try it</a><a href="#how">How it works</a><a href="#run">Run it</a><a class="btn" href="https://github.com/Tekholms-LW/ReAngle">GitHub</a></nav></header>
+<main>
+<section class="hero">
+  <h1>ReAngle <span>— re-shoot any video from a new angle</span></h1>
+  <p class="lead">Filmed once, re-shot from a new camera path on a 16 GB GPU. Open-source, built on <b>ComfyUI</b> with <b>LTX-2.5</b> and open weights.</p>
+  <video class="demo" src="media/demo.mp4" poster="media/poster.jpg?v=2" controls muted playsinline preload="metadata"></video>
+  <p class="cta"><a class="btn big" href="https://github.com/Tekholms-LW/ReAngle">View on GitHub</a> <span class="tag">#OpenSourceHiggsfield</span></p>
+</section>
+
+<section id="try">
+  <h2>Try it</h2>
+  <p class="muted">These are real ReAngle renders, precomputed so they cost nothing to view. Pick a clip and a camera move, then drag the divider.</p>
+  <div class="pick" id="clips"></div>
+  <div class="pick" id="moves"></div>
+  <div class="player" id="player">
+    <div class="stage" id="stage">
+      <video id="vA" muted playsinline loop preload="auto"></video>
+      <div class="top" id="topWrap"><video id="vB" muted playsinline loop preload="auto"></video></div>
+      <div class="divider" id="divider"><span></span></div>
+      <em class="lbl l">Original</em><em class="lbl r" id="lblR">Re-shot</em>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="play">Pause</button>
+    <label><input type="checkbox" id="loop" checked> Loop</label>
+    <label><input type="checkbox" id="sbs"> Show side by side</label>
+    <label id="fillWrap" hidden><input type="checkbox" id="fill" checked> Fill revealed areas</label>
+  </div>
+  <p class="muted small" id="note"></p>
+</section>
+
+<section id="how">
+  <h2>How it works</h2>
+  <ol class="flow">
+    <li><b>Your clip</b><span>any aspect, 2–10 s</span></li>
+    <li><b>Depth</b><span>Video Depth Anything Small lifts each frame into 3D</span></li>
+    <li><b>Camera path</b><span>presets or draw your own in the clip's depth</span></li>
+    <li><b>Warp + fill</b><span>reproject along the path, fill revealed areas from the background side</span></li>
+    <li><b>LTX-2.5 in ComfyUI</b><span>IC-LoRA guided re-render in overlapping, re-anchored chunks</span></li>
+    <li><b>Export</b><span>MP4, side-by-side, or 9:16 social</span></li>
+  </ol>
+</section>
+
+<section id="run">
+  <h2>Run it yourself</h2>
+  <div class="cards">
+    <div class="card"><h3>Local GPU (16 GB+)</h3><p>Runs on your own ComfyUI. Hardware detection picks a safe resolution, and a VRAM watchdog stops a job before your display driver crashes. Tested on an RTX 5080 (16 GB).</p><a href="https://github.com/Tekholms-LW/ReAngle#readme">Install guide →</a></div>
+    <div class="card"><h3>Comfy Cloud</h3><p>No big GPU? Point ReAngle at Comfy Cloud with your Comfy API key. Depth and the video render run on Comfy's GPUs. A short orbit cost about $0.10.</p><a href="https://github.com/Tekholms-LW/ReAngle#readme">Cloud setup →</a></div>
+  </div>
+</section>
+
+<section id="credits">
+  <h2>Credits &amp; licenses</h2>
+  <ul class="muted">
+    <li>ReAngle code: Apache-2.0.</li>
+    <li>LTX-2.5 (Lightricks), weights under the LTX-2.x Community License: free including commercial use for entities under $10M annual revenue; larger entities need a paid license.</li>
+    <li>Video Depth Anything Small: Apache-2.0.</li>
+    <li>Runs on <a href="https://www.comfy.org">ComfyUI</a>. Sample people are fully AI-generated (Grok Imagine).</li>
+  </ul>
+  <p class="muted small"><b>Clean-room statement.</b> ReAngle was written from scratch from public behaviour descriptions of "re-shoot"-style apps. It contains no Higgsfield code, assets, prompts, models or UI, and no code copied from other re-shoot projects.</p>
+</section>
+</main>
+<footer>ReAngle · <a href="https://github.com/Tekholms-LW/ReAngle">github.com/Tekholms-LW/ReAngle</a> · #OpenSourceHiggsfield · No cookies, no trackers.</footer>
+<script src="app.js"></script>
+</body></html>
