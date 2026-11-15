@@ -2,6 +2,8 @@
 
 **Re-shoot any video from a new camera angle, locally, with open weights.**
 
+[![swm cloud](https://img.shields.io/badge/swm%20cloud-Launch%20Pre--Loaded%20Workspace-0A66C2)](https://cloud.swmgpu.com/w/samofvaani/reangle-reshoot-4d-camera-studio)
+
 ![Original (left) vs. ReAngle 12° orbit (right)](docs/media/hero.gif)
 
 *Left: the source clip. Right: the same clip re-shot with a 12° orbit, rendered on a 16 GB RTX 5080. More: [before/after mp4](docs/media/before_after_orbit12.mp4) · [9:16 stacked](docs/media/social_stacked.mp4) · [9:16 wipe](docs/media/social_wipe.mp4).*
@@ -86,7 +88,7 @@ RESHOOT_BACKEND=local COMFY_LOCAL_URL=http://127.0.0.1:8001 make run   # http://
 Windows (PowerShell): create a venv in the repo, `pip install -r backend/requirements.txt`, `cd frontend; npm ci; npm run build`, then
 `$env:RESHOOT_BACKEND="local"; .venv\Scripts\uvicorn reshoot.main:app --app-dir backend --port 8000`.
 
-No GPU? `make run` uses the **mock** backend (a 2D stand-in) so you can try the UI. No GPU at all? Run it on Comfy Cloud, see below.
+No GPU? `make run` uses the **mock** backend (a 2D stand-in) so you can try the UI. No GPU at all? Launch the pre-loaded [**swm cloud** workspace](https://cloud.swmgpu.com/w/samofvaani/reangle-reshoot-4d-camera-studio) (48 GB GPU with `ReAngle`, `Video-Depth-Anything-Small`, and `LTX-2.5` pre-installed), or run it on Comfy Cloud, see below.
 
 ## Use
 
